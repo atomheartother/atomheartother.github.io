@@ -25,7 +25,7 @@ github_username:  atomheartother
 
 # Build settings
 markdown: kramdown
-theme: jekyll-theme-minimal
+theme: jekyll-theme-dinky
 gems:
   - jekyll-feed
   - github-pages
