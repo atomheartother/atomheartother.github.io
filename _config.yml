@@ -1,3 +1,4 @@
+
 # Welcome to Jekyll!
 #
 # This config file is meant for settings that affect your whole blog, values
@@ -25,7 +26,7 @@ github_username:  atomheartother
 
 # Build settings
 markdown: kramdown
-theme: jekyll-theme-hacker
+theme: minima
 gems:
   - jekyll-feed
   - github-pages
