@@ -13,6 +13,7 @@ ruby RUBY_VERSION
 gem "jekyll", "3.3.1"
 
 gem "github-pages", group: :jekyll_plugins
+gem "jekyll-theme-dinky"
 
 # This is the default theme for new Jekyll sites. You may change this to anything you like.
 gem "minima", "~> 2.0"
