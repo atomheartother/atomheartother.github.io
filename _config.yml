@@ -14,11 +14,11 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Tom Foolery
+title: Tom's Cave
 email: thomasnavennec@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   I'm a software developper and CTFer from France.
-  I like to talk about all sorts of things.
+  I like coding, making music and breaking things.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: https://atomheartother.github.io
 twitter_username: 
