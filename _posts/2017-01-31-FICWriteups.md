@@ -1,7 +1,7 @@
 ---
 layout: default
 title:  "FIC 2017 - Three short writeups"
-date:   2017-01-26 23:12:56 +0100
+date:   2017-01-31 19:38:42 +0100
 categories: cybersecurity
 desc: Various writeups for FIC 2017
 ---
