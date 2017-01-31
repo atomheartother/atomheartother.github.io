@@ -3,7 +3,7 @@ layout: default
 title:  "FIC 2017 - Three short writeups"
 date:   2017-01-31 19:38:42 +0100
 categories: cybersecurity
-desc: Various writeups for FIC 2017: One in phishing, one in steganography and another in forensics.
+desc: Various writeups for FIC 2017. One is in phishing, one in steganography and another in forensics.
 ---
 
 {% include postheader.md %}
