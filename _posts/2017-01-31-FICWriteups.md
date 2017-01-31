@@ -12,14 +12,14 @@ We went to FIC 2017 and participated in both challenges held there. More informa
 
 <h3>EPITA Challenge: Tout Un Mobile</h3>
 
-Someone at weakcorp got their bank information stolen. The theft happen through the victim' Android phone. We are given part of its files and the simple duty to figure out the date at which the attack occurred.
+This was a fun little phishing challenge! Someone at weakcorp got their bank information stolen. The theft happen through the victim' Android phone. We are given part of its files and the simple duty to figure out the date at which the attack occurred.
 
 We're given a .zip file containing media files from the SD Card and app data. There could be something in Downloads, but nothing seems obviously bad, so first we should check out the applications' databases. Android apps generally use SQLite, so we'll use the excellent [SQLite Browser](http://sqlitebrowser.org/). Let's check out their browsing history!
 
 ![Mobile 1]({{site.url}}/assets/FicChall1.png)
 <br>*Just another day at the NSA.*
 
-We can see they visited a site called FICBank a bunch of times. There's dates, but there is no reason to think the attack happened through browser. It could have, but let's dig deeper. After poking around the phone, we find the phone app at '`com.android.providers.telephony`', and it has an mms/sms database! Let's check it out. The mms/sms app has about 3000 messages, but we're only interested in messages that are about "FICBank". We input that in the SMS content filter and... bingo!
+We can see they visited a site called FICBank a bunch of times. There's dates, but there is no reason to think the attack happened through the victim's own browser. It could have, but let's dig deeper. After poking around the phone, we find the phone app at '`com.android.providers.telephony`', and it has an mms/sms database! Let's check it out. The mms/sms app has about 3000 messages, but we're only interested in messages that are about "FICBank". We input that in the SMS content filter and... bingo!
 
 ![Mobile 2]({{site.url}}/assets/FicChall2.png)
 <br>*Bingo Bango!*
