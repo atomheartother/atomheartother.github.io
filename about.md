@@ -4,6 +4,8 @@ title: About
 permalink: /about/
 ---
 
+<h3>About me</h3>
+
 This is my blog. I post things here.
 
 That's about it. You're very nice.
