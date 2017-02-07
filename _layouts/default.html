@@ -13,10 +13,7 @@
     <style>
       img {
       transition: -webkit-transform 0.25s ease;
-      }
-	
-      img:active {
-      -webkit-transform: scale(1.75);
+      transition: transform 0.25s ease;
       }
     </style>
     
@@ -66,4 +63,27 @@
       
     {% endif %}
   </body>
+  <script>
+  imgs = document.images;
+  for (var i = 0 ; i < imgs.length ; i++)
+   {
+     imgs[i].state = 0;
+     imgs[i].addEventListener('click', clickHandler, false);
+   }
+		       
+function clickHandler()
+{
+   if (this.state == 0)
+     {
+	 this.style.transform = "scale(1.75)";
+	 this.state = 1;
+     }
+   else
+     {
+	 this.style.transform = "scale(1)";
+	 this.state = 0;
+     }
+}
+
+  </script>
 </html>
