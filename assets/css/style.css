@@ -1,0 +1,12 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+.wrapper{
+    width: 1080px;
+}
+
+section{
+    width: 750px;
+}
