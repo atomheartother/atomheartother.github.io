@@ -70,3 +70,70 @@ As you can see, it's pretty basic, This challenge would be solved in a few secon
 <br>*This is what it looks like, the pass field gets filled up automatically every second, just as if I had typed it.*
 
 And when I came back... The passphrase was done! I honestly forgot what the passphrase was, but the resulting private key was `5KjzfnM4afWU8fJeUgGnxKbtG5FHtr6Suc41juGMUmQKC7WYzEG`, and that's the flag!
+
+<h3 id="NStep">Crypto 3: Next Step</h3>
+
+This challenge consists of an encrypted file, `message.new`, and a private key, `HackIM.key`. We were also given a picture, the cover of the Digits magazine for June 2016, with a few modifications. The challenge wwas worth 200 points. I'll go in detail about openssl and private keys, because overall otherwise the challenge was fairly short and easy.
+
+![Digit cover]({{site.url}}/assets/DigitCover.png)
+<br>*This feels very 90's to me for some reason.*
+
+Public/private key pairs, commonly called public key cryptography, are a solution to a simple problem: how do I send a message to someone over a potentially insecure connection, without being able to agree on a passphrase beforehand? If it requires a key of some sort (a 'key' being any data that you can use to encrypt the message, such as a string of characters), I could just send the key over to you, then encrypt my message with it, but anyone who has intercepted the key could also decrypt the message.
+
+Public key cryptography solves this problem with assymetric encryption. Let's say Alice wants people to be able to send messages to her securely. She generates two keys: A private and public key. The public key is used to encode the data, and then only the PRIVATE key can decode it. Alice puts her public key out in the open for all to see, and keeps her private key secret. Now anyone can encrypt a message meant for alice and send it over an insecure connection, even if it is intercepted, the attacker won't have access to the private key, they therefore cannot decrypt the data!
+
+![RSA keypair](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Public_key_encryption.svg/250px-Public_key_encryption.svg.png)
+<br>*Bob and Alice are very secretive about saying hello.*
+
+Key pairs are an important part of the SSL protocol, which is dedicated to providing secure connections between peers. To add another layer of security, private keys can be protected by a password, so that even if an user's private key fell in the wrong hands (like the private key we received for this challenge), no one could use it without the password. An usual way of manipulating key pairs is using `openssl`, an open source toolkit that implements SSL.
+
+So with all that in mind, let's try and decrypt the message we got with openssl!
+
+![Opening it]({{site.url}}/assets/openssl.png)
+<br>*I really need a green-on-black theme to be a true hacker.*
+
+Oh no, it's password protected! :c I should mention in a regular attack this could be a bit of a headache, even bruteforcing the password would take me a while. Luckily, the Digit cover that I showed above says that the password to decrypt `HackIM.key` is "1 + 5 digits". That can be understood as "1, then 5 digits", so 1xxxxx or as just 6 digits, and since I don't really trust whoever wrote it, I'll be safe and go for 6 digits.
+
+Ok so we know the password is 6 digits. Looking up a way to test RSA private key passwords in code yields [this Sackoverflow thread](http://stackoverflow.com/questions/41766417/verify-the-passphrase-for-rsa-private-key) which has the exact code I need - my script is actually pretty much a copy of the top reply. Let's code our bruteforcer! We just need to try every possible 6 digit number.
+
+{% highlight python %}
+import paramiko
+import itertools
+from paramiko import rsakey
+
+kf = open("HackIM.key", "r")
+
+dlist = itertools.product(['1', '2', '3', '4','5', '6',
+                           '7', '8', '9', '0'], repeat=6)
+
+for d in dlist:
+    s = ''.join(d)
+
+    kf.seek(0)
+    try:
+        nk = rsakey.RSAKey.from_private_key(kf, password=s)
+        print("success: " + s)
+        break
+    except paramiko.ssh_exception.SSHException:
+        print("fail: " + s)
+{% endhighlight %}
+
+We run it and it cracks the key in a few seconds - and it turns out the passphrase did have a '1' as its first digit! It's `141525`. We can now decrypt the message:
+
+![Opening it]({{site.url}}/assets/openssl2.png)
+<br>*Well, this isn't what I expected.*
+
+Alright, so we have to go to page `141525` of the magazine (I actually tried it with 41525 at first because remember, the cover says it's 1 + a 5 digit password, so the 1 isn't part of the password, but it didn't work), I found the digit magazine [here](https://www.pdf-archive.com/2016/06/04/digit-june-2016/digit-june-2016.pdf)... But the pdf only has 124 pages. That's fine, we can just do a modulus, and it'll be as if we kept counting pages until we reached 141525:
+
+`141525 % 124 = 41`
+
+We go to page 41 and manually try the md5 hash of all of these brands... ans clearTax turns out to be it!
+
+{% highlight bash %}
+TomArch% echo -ne "clearTax" | md5sum 
+8c437d9ef6c7786e9df3ac2bf223445e  -
+{% endhighlight %}
+
+And that's it, `clearTax` was the flag! Overall I'd say, CTF makers, please, skip stuff like the magazine search. It actually was a bit of a pain, between the two interpretations of what the password is, the different possible ways to interpret what "page 141525" is, and having to manually enter brand names for hashes, the flag might as well just have been in that text file. But it was still a fun little bruteforcing I suppose.
+
+Thanks for reading, I hope you enjoyed my two little writeups!
