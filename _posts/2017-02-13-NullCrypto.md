@@ -23,7 +23,7 @@ The QR just gives me "17iUnGoZbFrGS7uU9z2d2yRT9BKgVqnKnn", the address I'll get 
 
 ![Selenium Logo]({{site.url}}/assets/selenium1.jpg)
 
-[This startup page](http://selenium-python.readthedocs.io/getting-started.html) already pretty much has everything I need to solve this challenge. All I need to do is write a small script that takes every permutation of "ucoitsgr" and types it in the "Passphrase" field along with the prefix and suffix I was given, then test what the resulting address looks like. Let's do that!
+Selenium, as its home page eloquently states, *"automates browsers, that's it!"*. It's a neat tool that lets you start up a browser through code and manipulate it, as if you were actually using it, and it's exactly what I need.[This startup page](http://selenium-python.readthedocs.io/getting-started.html) already pretty much has everything I need to solve this challenge. All I need to do is write a small script that takes every permutation of "ucoitsgr" and types it in the "Passphrase" field along with the prefix and suffix I was given, then test what the resulting address looks like. Let's do that!
 
 {% highlight python %}
 from selenium import webdriver
