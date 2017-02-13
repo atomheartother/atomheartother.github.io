@@ -8,6 +8,6 @@ permalink: /about/
 
 This is my blog. I post things here.
 
-That's about it. You're very nice.
+That's about it. You're very nice[.](https://www.youtube.com/watch?v=Stg6fWCy6mA)
 
 This is my email: [thomasnavennec@gmail.com](mailto:thomasnavennec@gmail.com)

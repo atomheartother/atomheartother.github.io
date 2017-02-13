@@ -73,14 +73,14 @@ And when I came back... The passphrase was done! I honestly forgot what the pass
 
 <h3 id="NStep">Crypto 3: Next Step</h3>
 
-This challenge consists of an encrypted file, `message.new`, and a private key, `HackIM.key`. We were also given a picture, the cover of the Digits magazine for June 2016, with a few modifications. The challenge wwas worth 200 points. I'll go in detail about openssl and private keys, because overall otherwise the challenge was fairly short and easy.
+This challenge consists of an encrypted file, `message.new`, and a private key, `HackIM.key`. We were also given a picture: the cover of the Digits magazine for June 2016, with a few modifications. The challenge wwas worth 200 points. I'll go in detail about openssl and private keys, because overall otherwise the challenge was fairly short and easy.
 
 ![Digit cover]({{site.url}}/assets/DigitCover.png)
 <br>*This feels very 90's to me for some reason.*
 
-Public/private key pairs, commonly called public key cryptography, are a solution to a simple problem: how do I send a message to someone over a potentially insecure connection, without being able to agree on a passphrase beforehand? If it requires a key of some sort (a 'key' being any data that you can use to encrypt the message, such as a string of characters), I could just send the key over to you, then encrypt my message with it, but anyone who has intercepted the key could also decrypt the message.
+Public/private key pairs, commonly called public key cryptography, are a solution to a simple problem: how do I send a message to someone over a potentially insecure connection, without being able to agree on a passphrase beforehand? If it requires a key of some sort (a 'key' being any data that you can use to encrypt or decrypt the message, such as a string of characters), I could just send the key over to you, then encrypt my message with it, but anyone who has intercepted the key could also decrypt the message.
 
-Public key cryptography solves this problem with assymetric encryption. Let's say Alice wants people to be able to send messages to her securely. She generates two keys: A private and public key. The public key is used to encode the data, and then only the PRIVATE key can decode it. Alice puts her public key out in the open for all to see, and keeps her private key secret. Now anyone can encrypt a message meant for alice and send it over an insecure connection, even if it is intercepted, the attacker won't have access to the private key, they therefore cannot decrypt the data!
+Public key cryptography solves this problem with assymetric encryption. Let's say Alice wants people to be able to send messages to her securely. She generates two keys: A private and public key. The public key is used to encode the data, and then **only** the private key can decode it. Alice puts her public key out in the open for all to see, and keeps her private key secret. Now anyone can encrypt a message meant for alice with her public key and send it over an insecure connection. Even if it is intercepted, the attacker won't have access to the private key, they therefore cannot decrypt the data!
 
 ![RSA keypair](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Public_key_encryption.svg/250px-Public_key_encryption.svg.png)
 <br>*Bob and Alice are very secretive about saying hello.*
@@ -137,3 +137,5 @@ TomArch% echo -ne "clearTax" | md5sum
 And that's it, `clearTax` was the flag! Overall I'd say, CTF makers, please, skip stuff like the magazine search. It actually was a bit of a pain, between the two interpretations of what the password is, the different possible ways to interpret what "page 141525" is, and having to manually enter brand names for hashes, the flag might as well just have been in that text file. But it was still a fun little bruteforcing I suppose.
 
 Thanks for reading, I hope you enjoyed my two little writeups!
+
+**Edit:** I have since read some other writeup and it turns out that when you open the magazine in a certain website, the correct logo is on pages "14-15/25", which spells out 141525. If this is how it was meant to be solved, it's very convoluted and I was pretty lucky I got this flag with my modulus...
