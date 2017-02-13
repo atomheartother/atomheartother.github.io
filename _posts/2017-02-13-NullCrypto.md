@@ -10,7 +10,7 @@ desc: Two nullcon writeups for crypto challenges
 
 Inn0vHacktion just participated in Nullcon HackIM 2017. We finished 74th out of 363 teams that scored anything, with 1450 total points, and we're pretty happy about it! Here I'll present the writeups to two crypto challenges, #1 and #3... These challenges I felt weren't great example of cryptography challenges. They were more scripting/bruteforcing, in my mind. But alas, that is their category, so what can you do. I helped around with a few other challenges but these two were 100% my own doing, so without further ado, let's get to it!
 
-<h3>Crypto 1: Breaking Brain</h3>
+<h3 id="BBrain">Crypto 1: Breaking Brain</h3>
 
 This challenge, worth 300 points, presents itself under the form of a single image:
 
