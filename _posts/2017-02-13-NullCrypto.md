@@ -23,7 +23,7 @@ The QR just gives me "17iUnGoZbFrGS7uU9z2d2yRT9BKgVqnKnn", the address I'll get 
 
 ![Selenium Logo]({{site.url}}/assets/selenium1.jpg)
 
-[This startup page](http://selenium-python.readthedocs.io/getting-started.html) already pretty much has everything I need to solve this challenge. All I need is write a small script that takes every permutation of "ucoitsgr" and types it in the "Passphrase" field along with the prefix and suffix I was given, then test what the resulting address looks like. Let's do that!
+[This startup page](http://selenium-python.readthedocs.io/getting-started.html) already pretty much has everything I need to solve this challenge. All I need to do is write a small script that takes every permutation of "ucoitsgr" and types it in the "Passphrase" field along with the prefix and suffix I was given, then test what the resulting address looks like. Let's do that!
 
 {% highlight python %}
 from selenium import webdriver
@@ -64,7 +64,7 @@ for i in permutations('ucoitsgr'):
     passp.clear()
 {% endhighlight %}
 
-As you can see, it's pretty basic, This challenge would be solved in a few seconds weren't it for the fact that the address takes a solid 1 second to update after I enter the passphrase! So I have to `sleep()` in between every request... Fine, fine, I went for a lunch break while the script ran, the eggs in the challenge pic had made me hungry anyway.
+As you can see, it's pretty basic, This challenge would be solved in a few seconds weren't it for the fact that the address takes a solid 1 second to update after I enter the passphrase! So I have to `sleep()` in between each request... Fine, fine, I went for a lunch break while the script ran, the eggs in the challenge pic had made me hungry anyway.
 
 ![My script running]({{site.url}}/assets/NC17_2.png)
 <br>*This is what it looks like, the pass field gets filled up automatically every second, just as if I had typed it.*
