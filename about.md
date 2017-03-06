@@ -6,8 +6,8 @@ permalink: /about/
 
 <h3>About me</h3>
 
-This is my blog. I post things here.
+Want my CV? [Here it is]({{site.url}}/assets/CV.pdf).
 
-That's about it. You're very nice[.](https://www.youtube.com/watch?v=Stg6fWCy6mA)
+That's about it. Please try and have a nice day[.](https://www.youtube.com/watch?v=Stg6fWCy6mA)
 
 This is my email: [thomasnavennec@gmail.com](mailto:thomasnavennec@gmail.com)
