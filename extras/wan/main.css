@@ -1,0 +1,9 @@
+#wolfGirl {
+    height: 70%;
+}
+
+#wolfGirl img {
+    display: block;
+    height: 100%;
+    width: auto;
+}
