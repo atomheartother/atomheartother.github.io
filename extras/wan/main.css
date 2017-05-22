@@ -1,9 +1,25 @@
 #wolfGirl {
-    height: 70%;
+    position: absolute;
+
+    height: 60%;
+    animation-name: goLeft;
+    animation-duration: 500ms;
+    animation-delay: 0ms;
 }
 
 #wolfGirl img {
     display: block;
     height: 100%;
     width: auto;
+}
+
+/*
+Go left, first animation
+*/
+@keyframes goLeft {
+    0% { left: 20px;
+         bottom: -20px; }
+    20% { bottom: 0;}
+    100% {left: 60px;
+         bottom: -30px}
 }
