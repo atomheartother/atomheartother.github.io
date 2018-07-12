@@ -107,10 +107,10 @@ CMakeCache.txt  CMakeFiles  cmake_install.cmake  libmylib.so  libmylib.so.1.0  M
 
 The experience should be the same on Windows, though you'll have to install MSVC++ and CMake beforehand of course. Note that I use `cmake --build .` instead of calling the compiler, which saves me a lot of hassle and makes this command cross-platform and cross-compiler, I highly recommend it. Now, this is fine and all, but problems arise when you start to add dependencies.
 
-**Note:** Windows will always compile in 32bit by default, regardless of your computer's architecture. If you need the library to be in 64bit, you need to use `cmake cmake -G "Visual Studio 15 2017 Win64" ..`. If I seem a bit exasperated with Windows troughout this post, it's because a lot of this project has been to adapt to Windows's "quirks".
+**Note:** Windows will always compile in 32bit by default, regardless of your computer's architecture. If you need the library to be in 64bit, you need to use `cmake -G "Visual Studio 15 2017 Win64" ..`. Windows will also output two files, a `.dll` and a `.lib`, both of which should be used to call your library.
 
 ## CMake Dependencies
-Because this is cross-platform, I highly recommend building dependencies from source, it'll save you some hassle in a lot of areas. This section will go over adding other CMake projects as your dependency directly, from source. First of all, you can only have dynamic libraries as your dependencies, **as far as I know** there is no way to have a static library as a dependency to a dynamic library here. It's not the biggest deal, all you have to do is edit their own CMakeList and make their library dynamic if necessary.
+Because this is cross-platform, I highly recommend building dependencies from source, it'll save you some hassle in a lot of areas. This section will go over adding other CMake projects as your dependency directly, from source, meaning that all you need is the dependency's project directory, with its `CMakeLists.txt` file at the root. First of all, you can only have dynamic libraries as your dependencies, **as far as I know** there is no way to have a static library as a dependency to a dynamic library here. It's not the biggest deal, all you have to do is edit their CMakeLists and make their library into a dynamic one.
 
 Now, this is how you add a dynamic library as a dependency to another dynamic library in CMake. Here we'll put the dependency "libdependency" in the folder `lib/libdependency/`, so `lib/libdependency/` should contain the dependency's CMakeList. Let's add it to our project's CMakeLists:
 
@@ -131,7 +131,7 @@ add_subdirectory(./lib/libdependency/)
 target_link_libraries(${PROJ_NAME} ${DEPENDENCY_NAME})
 {% endhighlight %}
 
-And there you go, you now have a functional CMakeLists which can build itself and its dependencies on Windows, Mac and Linux. But our code is a very simple addition function - and we're not even using C++ classes! Let's try and do that.
+And there you go, you now have a functional `CMakeLists.txt` which can build itself and its dependencies on Windows, Mac and Linux. But our code isn't even using C++ classes! Let's try and do that.
 
 ## One Class to Rule Them All
 So my objective when I started this project was to have two entry points for my API: A C++ class which the Unreal project could just use as-is with `new()` and a C API which would mirror every public method of the C++ class, to be imported in Unity. While this is what I did, I should make it clear:  **Unreal Engine will not let you import C++ classes like that**, as far as we can tell the C API is the only one you can use for Unreal Engine. Still, making a single class for everything is a nice way to centralize everything, and it works really well! So let's do that:
@@ -222,8 +222,8 @@ Log modes can be anything you want, in the case of my project the values are:
 
 This issue arose because both Unity and Unreal Engine fail to redirect `std::cout/cerr` to their built-in consoles, but my developers wanted to be able to see my messages there. The system I used isn't entirely of my own making, I used the system described [here](https://answers.unity.com/questions/30620/how-to-debug-c-dll-code.html) and simply made it cross-platform, but the gist of it is that I let the user send me a callback function which gets sent the string to log. The user can then do whatever they want with the string. There needs to be a separate mode for Unity as Unity defines its callback function differently (since it's in C#, I would assume). This is the typedef I use for the callback parameters:
 
+`DebugCallback.hh`
 {% highlight c++ %}
-
 #pragma once
 
 #ifdef _WIN32
@@ -236,7 +236,7 @@ typedef void (*UnityDebugCallback)(const char* str);
 typedef void (*DebugCallback)(const char* str);
 {% endhighlight %}
 
-I can then use the types `UnityDebugCallback` and `DebugCallback` to receive functions from Unity and Unreal Engine, and this system works, again, on Linux, Mac and Windows.
+I can then use the types `UnityDebugCallback` and `DebugCallback` to receive functions respectively from Unity and any other system, and this system works, again, on Linux, Mac and Windows.
 
 ## Conclusion
-That's about all I have to say about this project when it comes to the build system and how I abstracted everything to work on Mac, Linux and Windows across Unreal Engine, Unity and anything else that can import C functions. I tend to dislike blog posts that beat around the bush and I attempted to keep the information condensed, I hope it was informative for whoever reads this. Good luck!
+That's about all I have to say about this project when it comes to the build system and how I abstracted everything to work on Mac, Linux and Windows across Unreal Engine, Unity and anything else that can import C functions. I tend to dislike blog posts that beat around the bush and I attempted to keep the information condensed, I hope it was informative for whoever reads this. Good luck with your own project!
