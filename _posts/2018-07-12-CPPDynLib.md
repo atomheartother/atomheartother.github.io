@@ -4,6 +4,7 @@ title:  "Writing a Cross-Platform Dynamic Library"
 categories: 
 - C++
 last_modified_at:   2018-07-12 18:08:00 +0000
+comments: true
 ---
 I've recently had to code a cross-platform dynamic library in C++, meant to be used in Unity and Unreal Engine on Linux, Mac and Windows. While there's already quite a bit of literature on the topic of dynamic libraries in C++, I encountered some strange bugs and lack of information when it came to a few specific things. I've therefore decided to write about my experience and the solution to the problems we encountered along the way, to hopefully save someone else some time. This is more of an aggregator of knowledge than anything, I don't claim to have invented the wheel here.
 
@@ -163,7 +164,7 @@ int apiClass::add(int a, int b) {
 }
 {% endhighlight%}
 
-Now that we have this class, we can use it in our C API in order to have a single codebase for everything. We'll need to add a methot to initialize the library, and one to close it:
+Now that we have this class, we can use it in our C API in order to have a single codebase for everything. We'll need to add a method to initialize the library, and one to close it:
 
 {% highlight c++ %}
 // main.cpp

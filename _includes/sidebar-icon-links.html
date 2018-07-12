@@ -25,6 +25,22 @@
       {% endif %}
     {% endfor %}
   
+    {% if site.twitter_username %}
+      <a id="twitter-link"
+          class="icon" title="Twitter" aria-label="Twitter"
+          href="https://twitter.com/{{ site.twitter_username }}">
+          <img src="{{site.url}}/assets/twitter.svg" style="height:35px;width: auto;">
+      </a>
+    {% endif %}
+
+    {% if site.github_username %}
+      <a id="github-link"
+          class="icon" title="GitHub" aria-label="GitHub"
+          href="https://github.com/{{ site.github_username }}">
+          <img src="{{site.url}}/assets/github.svg" style="height:35px;width: auto;">
+      </a>
+    {% endif %}
+
     {% if tags_page %}
       <a id="tags-link"
          class="icon{% if page.url == '/tags' %} active{% endif %}"
@@ -42,6 +58,6 @@
         {% include svg/search.svg %}
       </a>
     {% endif %}
-  
+
     {% include custom-icon-links.html %}
   </nav>
