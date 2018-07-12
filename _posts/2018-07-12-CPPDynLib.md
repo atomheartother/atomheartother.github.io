@@ -6,8 +6,6 @@ categories:
 - C++
 desc: My expetience writing a cross-platform dynamic library in C++ for use in Unreal, Unity and everything.
 ---
-
-<h1>Writing a Cross-Platform Dynamic Library</h1>
 I've recently had to code a cross-platform dynamic library in C++, meant to be used in Unity and Unreal Engine on Linux, Mac and Windows. While there's already quite a bit of literature on the topic of dynamic libraries in C++, I encountered some strange bugs and lack of information when it came to a few specific things. I've therefore decided to write about my experience and the solution to the problems we encountered along the way, to hopefully save someone else some time. This is more of an aggregator of knowledge than anything, I don't claim to have invented the wheel here.
 
 A quick disclaimer however: this post isn't meant to teach you how to code in C++, what a CMakeList is or what a dynamic library is. There are already lots of resources on this and my goal here is just to share my knowledge with this specific project, if you don't understand part of this post I recommend you go research it before reading on. I'll be dividing up this post in a few sections which are mostly independent, so you can skip them if you're confident they'll teach you nothing. Some parts will also focus on some quirks of integrating a dynamic library with Unreal and Unity.
