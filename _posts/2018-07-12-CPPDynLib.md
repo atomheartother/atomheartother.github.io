@@ -19,9 +19,8 @@ Our codebase is already a bit cluttered and would make for a tedious first read,
 ## A simple add() function
 I like to make an addition function to test libraries, so let's do that:
 
-`main.cpp`
 {% highlight c++ %}
-
+// main.cpp
 extern "C"
 {
   EXPORTED int add(int a, int b)
@@ -33,8 +32,8 @@ extern "C"
 
 `EXPORTED`, here, is a macro which will allow us to define import and export keywords at compile time. This is necessary because Windows basically needs to be told it should export symbols at compile time, that it should import them at run time, and other systems don't need anything said there, so, in a header file, we need:
 
-`exported.h`
 {% highlight c %}
+// exported.h
 #pragma once
 
 // Define EXPORTED for any platform
@@ -53,8 +52,8 @@ We import the header file in our source code and voilà! Now on Linux, we have a
 
 ## CMake
 Setting up CMake is easy enough for cross-platform, but there are quirks to work out. First a short description of how to make a dynamic library in CMake this is a stripped down and simplified version of the CMakeLists in our project which you can find [here](https://github.com/RoukaVici/LibRoukaVici/blob/master/CMakeLists.txt):
-`CMakeLists.txt`
 {% highlight cmake %}
+# CMakeLists.txt
 # Always set the cmake min version.
 cmake_minimum_required(VERSION 3.11)
 
@@ -114,8 +113,8 @@ Because this is cross-platform, I highly recommend building dependencies from so
 
 Now, this is how you add a dynamic library as a dependency to another dynamic library in CMake. Here we'll put the dependency "libdependency" in the folder `lib/libdependency/`, so `lib/libdependency/` should contain the dependency's CMakeList. Let's add it to our project's CMakeLists:
 
-`CMakeLists.txt`
 {% highlight cmake %}
+# CMakeLists.txt
 # This line will export your dependency's symbols and make them available to your project on Windows. Without this your code will compile but it won't run on Windows!
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
@@ -136,7 +135,6 @@ And there you go, you now have a functional `CMakeLists.txt` which can build its
 ## One Class to Rule Them All
 So my objective when I started this project was to have two entry points for my API: A C++ class which the Unreal project could just use as-is with `new()` and a C API which would mirror every public method of the C++ class, to be imported in Unity. While this is what I did, I should make it clear:  **Unreal Engine will not let you import C++ classes like that**, as far as we can tell the C API is the only one you can use for Unreal Engine. Still, making a single class for everything is a nice way to centralize everything, and it works really well! So let's do that:
 
-`apiClass.hh` and `apiClass.cpp`
 {% highlight c++ %}
 // apiClass.hh:
 #include "exported.h"
@@ -167,8 +165,8 @@ int apiClass::add(int a, int b) {
 
 Now that we have this class, we can use it in our C API in order to have a single codebase for everything. We'll need to add a methot to initialize the library, and one to close it:
 
-`main.cpp`
 {% highlight c++ %}
+// main.cpp
 #include "exported.h"
 #include "apiClass.hh"
 
@@ -203,8 +201,8 @@ So you're ready to get coding, good, but good error messages are important, and 
 ## A Logging System
 So first of all, the logging system needs to run outside of the current scope that we have defined, where we initialize with `initLib()`. Why? Because we might want to log the initialization of the library, in case something goes wrong! The user therefore needs to be able to manipulate these functions before initializing the library. So we make it into a namespace instead:
 
-`Debug.hh`
 {% highlight c++ %}
+// Debug.hh
 namespace Debug {
   void SetLogMode(const int method);
   void Log(const std::string& msg, bool force = false);
@@ -221,9 +219,8 @@ Log modes can be anything you want, in the case of my project the values are:
 "Silent mode" ended up being requested by my developers who wanted to turn verbose mode on and off "on the fly". These functions aren't anything special and if you're insterested in how I implemented them you can find the complete source code for [Debug.hh](https://github.com/RoukaVici/LibRoukaVici/blob/master/src/Debug.hh) and [Debug.cpp](https://github.com/RoukaVici/LibRoukaVici/blob/master/src/Debug.cpp) on our repository. There is one mode which is interesting to talk about though, and it's that I give the user the ability to set a callback function.
 
 This issue arose because both Unity and Unreal Engine fail to redirect `std::cout/cerr` to their built-in consoles, but my developers wanted to be able to see my messages there. The system I used isn't entirely of my own making, I used the system described [here](https://answers.unity.com/questions/30620/how-to-debug-c-dll-code.html) and simply made it cross-platform, but the gist of it is that I let the user send me a callback function which gets sent the string to log. The user can then do whatever they want with the string. There needs to be a separate mode for Unity as Unity defines its callback function differently (since it's in C#, I would assume). This is the typedef I use for the callback parameters:
-
-`DebugCallback.hh`
 {% highlight c++ %}
+// DebugCallback.hh
 #pragma once
 
 #ifdef _WIN32
