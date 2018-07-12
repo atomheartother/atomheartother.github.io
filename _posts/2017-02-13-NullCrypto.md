@@ -1,10 +1,9 @@
 ---
-layout: default
+layout: post
 title:  "Nullcon HackIM 2017 - Crypto challenges"
-date:   2017-02-13 00:21:42 +0100
+last_modified_at:   2017-02-13 00:21:42 +0100
 categories: 
 - Cybersecurity
-desc: Two nullcon writeups for crypto challenges
 ---
 
 Inn0vHacktion just participated in Nullcon HackIM 2017. We finished 74th out of 363 teams that scored anything, with 1450 total points, and we're pretty happy about it! Here I'll present the writeups to two crypto challenges, #1 and #3... These challenges I felt weren't great example of cryptography challenges. They were more scripting/bruteforcing, in my mind. But alas, that is their category, so what can you do. I helped around with a few other challenges but these two were 100% my own doing, so without further ado, let's get to it!

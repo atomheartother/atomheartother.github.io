@@ -1,21 +1,22 @@
 ---
-layout: default
+layout: post
 title:  "Writing a Cross-Platform Dynamic Library"
-date:   2018-07-12 13:50:56 +0000
 categories: 
 - C++
-desc: My expetience writing a cross-platform dynamic library in C++ for use in Unreal, Unity and everything.
+last_modified_at:   2018-07-12 18:08:00 +0000
 ---
 I've recently had to code a cross-platform dynamic library in C++, meant to be used in Unity and Unreal Engine on Linux, Mac and Windows. While there's already quite a bit of literature on the topic of dynamic libraries in C++, I encountered some strange bugs and lack of information when it came to a few specific things. I've therefore decided to write about my experience and the solution to the problems we encountered along the way, to hopefully save someone else some time. This is more of an aggregator of knowledge than anything, I don't claim to have invented the wheel here.
 
 A quick disclaimer however: this post isn't meant to teach you how to code in C++, what a CMakeList is or what a dynamic library is. There are already lots of resources on this and my goal here is just to share my knowledge with this specific project, if you don't understand part of this post I recommend you go research it before reading on. I'll be dividing up this post in a few sections which are mostly independent, so you can skip them if you're confident they'll teach you nothing. Some parts will also focus on some quirks of integrating a dynamic library with Unreal and Unity.
 
-<h2>Introducing the Project</h2>
+## Introducing the Project
 My team and I are working on a pair of gloves which provide haptic feedback to people when they use the LeapMotion. The idea is simple: we provide an API to developers, who can use it to send vibrations in whatever pattern they want to whatever motor they want. We need to develop an Unity asset and an Unreal Engine asset to make life easier for developers, and to make sure the project is extensible we also need a low-level SDK which can basically be called from any language. A dynamic library therefore makes the most sense, to have a single codebase which takes care of communication with the gloves while the Unity and Unreal devs can worry about presentation and additional features without ever worrying about actually doing all the low-level work involved in connecting to the glove. [The repo is here if you're interested in looking at the source](https://github.com/RoukaVici/LibRoukaVici).
 
 While our target audience is basically only going to run Windows, most of our developers are either on Linux or on Mac, and there's no telling where the project might go later, so I opted to make the code platform-agnostic to make everyone's lives easier. C++ was also the language of choice here, since I didn't want any funny business with a higher level language locking me out of a low-enough level API (and I really like C++ anyway).
 
-<h2>A simple add() function</h2>
+Our codebase is already a bit cluttered and would make for a tedious first read, so instead of walking you through our code I'll build a much simpler C++ dynamic library in this post, using the same techniques as in our project. This should give you the tools you need in case you want to dive into my sources for any reason. So let's build a library!
+
+## A simple add() function
 I like to make an addition function to test libraries, so let's do that:
 
 `main.cpp`
@@ -50,7 +51,7 @@ extern "C"
 
 We import the header file in our source code and voilà! Now on Linux, we have a plain old `int add()` function, while all the Windows wizardry is handled by the compiler. We'll just have to remember to set `WIN_EXPORT` to true when we compile on Windows (see below). Good! Will this work? Well, let's make a CMakeLists and see.
 
-<h2>CMake</h2>
+## CMake
 Setting up CMake is easy enough for cross-platform, but there are quirks to work out. First a short description of how to make a dynamic library in CMake this is a stripped down and simplified version of the CMakeLists in our project which you can find [here](https://github.com/RoukaVici/LibRoukaVici/blob/master/CMakeLists.txt):
 `CMakeLists.txt`
 {% highlight cmake %}
@@ -70,7 +71,7 @@ if (UNIX)
 else()
   # MSVC
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /MTd /W2 /c")
-  # Set the DLLEXPORT variable to export symbols.
+  # Set the WIN_EXPORT variable to export symbols on windows
   add_definitions(-DWIN_EXPORT)
 endif()
 
@@ -106,7 +107,9 @@ CMakeCache.txt  CMakeFiles  cmake_install.cmake  libmylib.so  libmylib.so.1.0  M
 
 The experience should be the same on Windows, though you'll have to install MSVC++ and CMake beforehand of course. Note that I use `cmake --build .` instead of calling the compiler, which saves me a lot of hassle and makes this command cross-platform and cross-compiler, I highly recommend it. Now, this is fine and all, but problems arise when you start to add dependencies.
 
-<h2>CMake Dependencies</h2>
+**Note:** Windows will always compile in 32bit by default, regardless of your computer's architecture. If you need the library to be in 64bit, you need to use `cmake cmake -G "Visual Studio 15 2017 Win64" ..`. If I seem a bit exasperated with Windows troughout this post, it's because a lot of this project has been to adapt to Windows's "quirks".
+
+## CMake Dependencies
 Because this is cross-platform, I highly recommend building dependencies from source, it'll save you some hassle in a lot of areas. This section will go over adding other CMake projects as your dependency directly, from source. First of all, you can only have dynamic libraries as your dependencies, **as far as I know** there is no way to have a static library as a dependency to a dynamic library here. It's not the biggest deal, all you have to do is edit their own CMakeList and make their library dynamic if necessary.
 
 Now, this is how you add a dynamic library as a dependency to another dynamic library in CMake. Here we'll put the dependency "libdependency" in the folder `lib/libdependency/`, so `lib/libdependency/` should contain the dependency's CMakeList. Let's add it to our project's CMakeLists:
@@ -130,7 +133,7 @@ target_link_libraries(${PROJ_NAME} ${DEPENDENCY_NAME})
 
 And there you go, you now have a functional CMakeLists which can build itself and its dependencies on Windows, Mac and Linux. But our code is a very simple addition function - and we're not even using C++ classes! Let's try and do that.
 
-<h2>One Class to Rule Them All</h2>
+## One Class to Rule Them All
 So my objective when I started this project was to have two entry points for my API: A C++ class which the Unreal project could just use as-is with `new()` and a C API which would mirror every public method of the C++ class, to be imported in Unity. While this is what I did, I should make it clear:  **Unreal Engine will not let you import C++ classes like that**, as far as we can tell the C API is the only one you can use for Unreal Engine. Still, making a single class for everything is a nice way to centralize everything, and it works really well! So let's do that:
 
 `apiClass.hh` and `apiClass.cpp`
@@ -197,7 +200,7 @@ And this works! It'll work on every platform, and if you're using the library in
 
 So you're ready to get coding, good, but good error messages are important, and you can't be sure that your user will have a console output! (No, Unity and Unreal do not pipe the standard output to their built-in console). Let's get on that.
 
-<h2>A Logging System</h2>
+## A Logging System
 So first of all, the logging system needs to run outside of the current scope that we have defined, where we initialize with `initLib()`. Why? Because we might want to log the initialization of the library, in case something goes wrong! The user therefore needs to be able to manipulate these functions before initializing the library. So we make it into a namespace instead:
 
 {% highlight c++ %}
@@ -235,5 +238,5 @@ typedef void (*DebugCallback)(const char* str);
 
 I can then use the types `UnityDebugCallback` and `DebugCallback` to receive functions from Unity and Unreal Engine, and this system works, again, on Linux, Mac and Windows.
 
-<h2>Conclusion</h2>
+## Conclusion
 That's about all I have to say about this project when it comes to the build system and how I abstracted everything to work on Mac, Linux and Windows across Unreal Engine, Unity and anything else that can import C functions. I tend to dislike blog posts that beat around the bush and I attempted to keep the information condensed, I hope it was informative for whoever reads this. Good luck!
