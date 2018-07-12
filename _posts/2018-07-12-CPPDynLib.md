@@ -68,15 +68,18 @@ Note that while this is a simple implementation a more complete implementation s
       #define EXPORTED __declspec(dllimport) // Note: actually gcc seems to also supports this syntax.
     #endif
   #endif
+  #define NOT_EXPORTED
 #else
   #if __GNUC__ >= 4
     #define EXPORTED __attribute__ ((visibility ("default")))
+    #define NOT_EXPORTED  __attribute__ ((visibility ("hidden")))
   #else
     #define EXPORTED
+    #define NOT_EXPORTED
   #endif
 #endif
 {% endhighlight %}
-More about the visibility attribute [here](https://gcc.gnu.org/wiki/Visibility).
+You can then use EXPORTED and NOT_EXPORTED to optimize your dynamic library and only export the symbols you want (by default, on ELF systems, every symbol is exported). More about the visibility attribute [here](https://gcc.gnu.org/wiki/Visibility).
 
 We import the header file in our source code and voilà! Now on Linux, we have a plain old `int add()` function, while all the Windows wizardry is handled by the compiler. We'll just have to remember to set `WIN_EXPORT` to true when we compile on Windows (see below). Good! Will this work? Well, let's make a CMakeLists and see.
 
