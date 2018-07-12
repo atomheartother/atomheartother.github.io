@@ -12,6 +12,7 @@ A quick disclaimer however: this post isn't meant to teach you how to code in C+
 
 <h2>Introducing the Project</h2>
 My team and I are working on a pair of gloves which provide haptic feedback to people when they use the LeapMotion. The idea is simple: we provide an API to developers, who can use it to send vibrations in whatever pattern they want to whatever motor they want. We need to develop an Unity asset and an Unreal Engine asset to make life easier for developers, and to make sure the project is extensible we also need a low-level SDK which can basically be called from any language. A dynamic library therefore makes the most sense, to have a single codebase which takes care of communication with the gloves while the Unity and Unreal devs can worry about presentation and additional features without ever worrying about actually doing all the low-level work involved in connecting to the glove. [The repo is here if you're interested in looking at the source](https://github.com/RoukaVici/LibRoukaVici).
+
 While our target audience is basically only going to run Windows, most of our developers are either on Linux or on Mac, and there's no telling where the project might go later, so I opted to make the code platform-agnostic to make everyone's lives easier. C++ was also the language of choice here, since I didn't want any funny business with a higher level language locking me out of a low-enough level API (and I really like C++ anyway).
 
 <h2>A simple add() function</h2>
