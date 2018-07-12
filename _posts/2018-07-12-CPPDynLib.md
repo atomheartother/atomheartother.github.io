@@ -76,7 +76,7 @@ Note that while this is a simple implementation a more complete implementation s
   #endif
 #endif
 {% endhighlight %}
-([Source: gcc.gnu.org](https://gcc.gnu.org/wiki/Visibility))
+More about the visibility attribute [here](https://gcc.gnu.org/wiki/Visibility).
 
 We import the header file in our source code and voilà! Now on Linux, we have a plain old `int add()` function, while all the Windows wizardry is handled by the compiler. We'll just have to remember to set `WIN_EXPORT` to true when we compile on Windows (see below). Good! Will this work? Well, let's make a CMakeLists and see.
 
