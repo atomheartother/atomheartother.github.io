@@ -8,12 +8,12 @@ desc: My expetience writing a cross-platform dynamic library in C++ for use in U
 ---
 
 <h1>Writing a Cross-Platform Dynamic Library</h1>
-I've recently had to code a cross-platform dynamic library in C++, meant to be used in Unity and Unreal Engine on Linux, Mac and Windows. While there's already quite a bit of literature on the topic of dynamic libraries in C++, I encountered some strange bugs and lack of information when it came to a few specific things. I've therefore decided to write about my experience and the solution to the problems we encountered along the way, to hopefully save someone else some time.
+I've recently had to code a cross-platform dynamic library in C++, meant to be used in Unity and Unreal Engine on Linux, Mac and Windows. While there's already quite a bit of literature on the topic of dynamic libraries in C++, I encountered some strange bugs and lack of information when it came to a few specific things. I've therefore decided to write about my experience and the solution to the problems we encountered along the way, to hopefully save someone else some time. This is more of an aggregator of knowledge than anything, I don't claim to have invented the wheel here.
 
 A quick disclaimer however: this post isn't meant to teach you how to code in C++, what a CMakeList is or what a dynamic library is. There are already lots of resources on this and my goal here is just to share my knowledge with this specific project, if you don't understand part of this post I recommend you go research them before reading on. I'll be dividing up this post in a few sections which are mostly independent, so you can skip them if you're confident they'll teach you nothing. Some parts will also focus on some quirks of integrating a dynamic library with Unreal and Unity.
 
 <h2>Introducing the Project</h2>
-My team and I are working on a pair of gloves which provide haptic feedback to people when they use the LeapMotion. The idea is simple: we provide an API to developers, who can use it to send vibrations in whatever pattern they want to whatever motor they want. We need to develop an Unity asset and an Unreal Engine asset to make life easier for developers, and to make sure the project is extensible we also need a low-level SDK which can basically be called from any language. A dynamic library therefore makes the most sense, to have a single codebase which takes care of communication with the gloves while the Unity and Unreal devs can worry about presentation and additional features without ever worrying about actually doing all the low-level work involved in connecting to the glove.
+My team and I are working on a pair of gloves which provide haptic feedback to people when they use the LeapMotion. The idea is simple: we provide an API to developers, who can use it to send vibrations in whatever pattern they want to whatever motor they want. We need to develop an Unity asset and an Unreal Engine asset to make life easier for developers, and to make sure the project is extensible we also need a low-level SDK which can basically be called from any language. A dynamic library therefore makes the most sense, to have a single codebase which takes care of communication with the gloves while the Unity and Unreal devs can worry about presentation and additional features without ever worrying about actually doing all the low-level work involved in connecting to the glove. [The repo is here if you're interested in looking at the source](https://github.com/RoukaVici/LibRoukaVici).
 While our target audience is basically only going to run Windows, most of our developers are either on Linux or on Mac, and there's no telling where the project might go later, so I opted to make the code platform-agnostic to make everyone's lives easier. C++ was also the language of choice here, since I didn't want any funny business with a higher level language locking me out of a low-enough level API (and I really like C++ anyway).
 
 <h2>A simple add() function</h2>
@@ -49,10 +49,10 @@ extern "C"
 #endif
 {% endhighlight %}
 
-We import the header file in our source code and voilà! Now on Linux, we have a plain old `int add()` function, while all the Windows wizardry is handled by the compiler. Good! Will this work? Well, let's make a CMakeLists and see.
+We import the header file in our source code and voilà! Now on Linux, we have a plain old `int add()` function, while all the Windows wizardry is handled by the compiler. We'll just have to remember to set `WIN_EXPORT` to true when we compile on Windows (see below). Good! Will this work? Well, let's make a CMakeLists and see.
 
 <h2>CMake</h2>
-Setting up CMake is easy enough for cross-platform, but here I ran into some issues. First a short description of how to make a dynamic library in CMake this is a stripped down and simplified version of the CMakeLists in our project which you can find [here](https://github.com/RoukaVici/LibRoukaVici/blob/master/CMakeLists.txt):
+Setting up CMake is easy enough for cross-platform, but there are quirks to work out. First a short description of how to make a dynamic library in CMake this is a stripped down and simplified version of the CMakeLists in our project which you can find [here](https://github.com/RoukaVici/LibRoukaVici/blob/master/CMakeLists.txt):
 `CMakeLists.txt`
 {% highlight cmake %}
 # Always set the cmake min version.
@@ -63,6 +63,17 @@ set (PROJECT_VERSION "1.0")
 
 # Set the variable PROJ_NAME to whatever your library's name is, PROJECT_VERSION should be a version string like "0.1"
 project(${PROJ_NAME} VERSION ${PROJECT_VERSION})
+
+# Let's set platform-specific flags
+if (UNIX)
+  # G++
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+else()
+  # MSVC
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /MTd /W2 /c")
+  # Set the DLLEXPORT variable to export symbols.
+  add_definitions(-DWIN_EXPORT)
+endif()
 
 # Set your projet's source files here
 set (LIBSRCS ./main.cpp)
