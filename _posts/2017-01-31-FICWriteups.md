@@ -2,11 +2,10 @@
 layout: default
 title:  "FIC 2017 - Three short writeups"
 date:   2017-01-31 19:38:42 +0100
-categories: cybersecurity
+categories: 
+- Cybersecurity
 desc: Various writeups for FIC 2017. One is in phishing, one in steganography and another in forensics.
 ---
-
-{% include postheader.md %}
 
 We went to FIC 2017 and participated in both challenges held there. More information [here]({% post_url 2017-01-26-FIC2017 %})! These are three short writeups on simple challenges we did there. I had to do a presentation to first-year students on how we approach challenges, so I thought basic challenges were a good place to start, and a good excuse to write a blog post down too!
 

@@ -1,13 +1,7 @@
 ---
-layout: default
+layout: page
 title: About
-permalink: /about/
+sidebar_link: true
 ---
 
-<h3>About me</h3>
-
-Want my CV? [Here it is]({{site.url}}/assets/CV.pdf).
-
-That's about it. Please try and have a nice day[.](https://www.youtube.com/watch?v=Stg6fWCy6mA)
-
-This is my email: [thomasnavennec@gmail.com](mailto:thomasnavennec@gmail.com)
+I have no information to put here (yet). Please try and have a nice day[.](https://www.youtube.com/watch?v=Stg6fWCy6mA)
