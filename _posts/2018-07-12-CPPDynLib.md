@@ -203,8 +203,8 @@ So you're ready to get coding, good, but good error messages are important, and 
 ## A Logging System
 So first of all, the logging system needs to run outside of the current scope that we have defined, where we initialize with `initLib()`. Why? Because we might want to log the initialization of the library, in case something goes wrong! The user therefore needs to be able to manipulate these functions before initializing the library. So we make it into a namespace instead:
 
-{% highlight c++ %}
 `Debug.hh`
+{% highlight c++ %}
 namespace Debug {
   void SetLogMode(const int method);
   void Log(const std::string& msg, bool force = false);
