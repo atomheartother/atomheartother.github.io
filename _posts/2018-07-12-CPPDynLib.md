@@ -33,7 +33,7 @@ extern "C"
 }
 {% endhighlight %}
 
-`EXPORTED`, here, is a macro which will allow us to define import and export keywords at compile time. This is necessary because Windows basically needs to be told it should export symbols at compile time, that it should import them at run time, and other systems don't need anything said there, so, in a header file, we need:
+`EXPORTED`, here, is a macro which will allow us to define import and export keywords at compile time. This is necessary because Windows needs to be told it should export symbols at compile time, that it should import them at run time, and ELF systems don't need anything said there by default since they export every simbol by default, so, in a header file, we need:
 
 {% highlight c %}
 // exported.h
@@ -83,6 +83,8 @@ Note that while this is a simple and functional implementation, a more complete 
 #endif
 {% endhighlight %}
 You can then use EXPORTED and NOT_EXPORTED to optimize your dynamic library and only export the symbols you want (by default, on ELF systems, every symbol is exported). More about the visibility attribute [here](https://gcc.gnu.org/wiki/Visibility).
+
+But maybe you don't want to write those header files yourself, in which case you can use the CMake [GenerateExportHeader](https://cmake.org/cmake/help/v3.0/module/GenerateExportHeader.html) module which also gives you access to DEPRECATED macros and the likes.
 
 We import the header file in our source code and voilà! Now all the export symbol wizardry is handled by the compiler. We'll just have to remember to set `WIN_EXPORT` to true when we compile on Windows (see below). Good! Will this work? Well, let's make a CMakeLists and see.
 
