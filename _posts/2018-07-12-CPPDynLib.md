@@ -154,9 +154,9 @@ The experience should be the same on Windows, though you'll have to install MSVC
 Now, this CmakeLists is fine and all, but problems arise when you start to add dependencies.
 
 ## CMake Dependencies
-Because this is cross-platform, I highly recommend building dependencies from source, it'll save you some hassle in a lot of areas. This section will go over adding other CMake projects as your dependency directly, from source, meaning that all you need is the dependency's project directory, with its `CMakeLists.txt` file at the root. First of all, you can only have dynamic libraries as your dependencies, **as far as I know** there is no way to have a static library as a dependency to a dynamic library here, it can't be linked. It's not the biggest deal, all you have to do is edit their CMakeLists and make their library into a dynamic one.
+Because this is cross-platform, I highly recommend building dependencies from source, it'll save you some hassle in a lot of areas. This section will go over adding other CMake projects as your dependency directly, from source, meaning that all you need is the dependency's project directory, with its `CMakeLists.txt` file at the root.
 
-Now, this is how you add a dynamic library as a dependency to another dynamic library in CMake. Here we'll put the dependency "libdependency" in the folder `lib/libdependency/`, so `lib/libdependency/` should contain the dependency's CMakeList. Let's add it to our project's CMakeLists:
+Here we'll put the dependency "libdependency" in the folder `lib/libdependency/`, so `lib/libdependency/` should contain the dependency's CMakeList. Let's add it to our project's CMakeLists:
 
 {% highlight cmake %}
 # CMakeLists.txt
