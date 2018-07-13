@@ -130,7 +130,7 @@ else()
 endif(UNIX)
 {% endhighlight %}
 
-If you're unfamiliar with this modern CMake syntax, I highly recommend you read articles on it like [this one](https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/). Now let's build it, this is what it should look like on Linux:
+If you're unfamiliar with this modern CMake syntax, I highly recommend you read articles on it like [this one](https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/), because my post alone isn't enough to cover the vast topic that is CMake best practices. Now let's build it, this is what it should look like on Linux:
 {% highlight console %}
 [demo]$ ls
 CMakeLists.txt  exported.h  main.cpp
