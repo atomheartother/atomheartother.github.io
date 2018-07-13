@@ -90,42 +90,47 @@ We import the header file in our source code and voilà! Now all the export symb
 Setting up CMake is easy enough for cross-platform, but there are quirks to work out. First a short description of how to make a dynamic library in CMake this is a stripped down and simplified version of the CMakeLists in our project which you can find [here](https://github.com/RoukaVici/LibRoukaVici/blob/master/CMakeLists.txt):
 {% highlight cmake %}
 # CMakeLists.txt
-# Always set the cmake min version.
-cmake_minimum_required(VERSION 3.11)
 
-set (PROJ_NAME mylib)
+# Always set the cmake min version.
+cmake_minimum_required(VERSION 3.0)
+
 set (PROJECT_VERSION "1.0")
 
 # Set the variable PROJ_NAME to whatever your library's name is, PROJECT_VERSION should be a version string like "0.1"
-project(${PROJ_NAME} VERSION ${PROJECT_VERSION})
+project(mylib VERSION ${PROJECT_VERSION})
+
+# To build shared libraries in Windows, we set CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS to TRUE.
+# See https://cmake.org/cmake/help/v3.4/variable/CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS.html
+# See https://blog.kitware.com/create-dlls-on-windows-without-declspec-using-new-cmake-export-all-feature/
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+# Create our library target
+add_library(mylib SHARED)
+
+target_sources(mylib
+  ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+)
+
+# This will name your output .so files "libsomething.1.0" which is pretty useful
+set_target_properties(roukavici
+PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION}
+)
 
 # Let's set platform-specific flags
 if (UNIX)
-  # G++
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+    # G++
+    target_compile_options(mylib PRIVATE -Wall -Wextra)
 else()
-  # MSVC
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /MTd /W2 /c")
-  # Set the WIN_EXPORT variable to export symbols on windows
-  add_definitions(-DWIN_EXPORT)
-endif()
-
-# Set your projet's source files here
-set (LIBSRCS ./main.cpp)
-
-add_library(${PROJ_NAME} SHARED ${LIBSRCS})
-
-# Set the include directories for your header files
-include_directories(mylib .)
-
-# This will name your output .so files "libsomething.0.1" which is pretty useful
-set_target_properties(${PROJ_NAME}
-  PROPERTIES
-  VERSION ${PROJECT_VERSION}
-SOVERSION ${PROJECT_VERSION})
+    # MSVC
+    target_compile_options(mylib PRIVATE /EHsc /MTd /W2 /c)
+    # Set the DLLEXPORT variable to export symbols
+    target_compile_definitions(mylib PRIVATE WIN_EXPORT)
+endif(UNIX)
 {% endhighlight %}
 
-Now let's build it, this is what it should look like on Linux:
+If you're unfamiliar with this modern CMake syntax, I highly recommend you read articles on it like [this one](https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/). Now let's build it, this is what it should look like on Linux:
 {% highlight console %}
 [demo]$ ls
 CMakeLists.txt  exported.h  main.cpp
@@ -156,16 +161,13 @@ Now, this is how you add a dynamic library as a dependency to another dynamic li
 # This line will export your dependency's symbols and make them available to your project on Windows. Without this your code will compile but it won't run on Windows!
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# The name you set should match the PROJECT_NAME variable in your dependency's CMakeLists
-set (DEPENDENCY_NAME "libdependency")
-# You may want to add their include directories since your code might use their header files
-include_directories(./lib/libdependency/src)
+# You may want to add their include directories since your code might use their header files. If libdependency is exporting its symbols properly you shouldn't have to do this though.
+target_include_directories(mylib PRIVATE ./lib/libdependency/src)
 # We can now add their CMakeList as a child to ours.
 add_subdirectory(./lib/libdependency/)
 
 # And now, we tell CMake that libdependency should be linked to our library
-# ... the add_library(mylib ...) line needs to be before here
-target_link_libraries(${PROJ_NAME} ${DEPENDENCY_NAME})
+target_link_libraries(mylib PRIVATE libdependency)
 {% endhighlight %}
 
 There's a more complete description of `add_subdirectory` for multiple dependencies and the likes in [this stackoverflow thread](https://stackoverflow.com/questions/16398937/cmake-and-finding-other-projects-and-their-dependencies/16404000). And there you go, you now have a functional `CMakeLists.txt` which can build itself and its dependencies on Windows, Mac and Linux. But our code isn't even using C++ classes! Let's try and do that.
