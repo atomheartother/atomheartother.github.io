@@ -120,16 +120,16 @@ PROPERTIES
     SOVERSION ${PROJECT_VERSION}
 )
 
-# Let's set platform-specific flags
-if (UNIX)
+# Let's set compiler-specific flags
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     # G++
-    target_compile_options(mylib PRIVATE -Wall -Wextra)
-else()
+    target_compile_options(roukavici PRIVATE -Wall -Wextra)
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     # MSVC
-    target_compile_options(mylib PRIVATE /EHsc /MTd /W2 /c)
+    target_compile_options(roukavici PRIVATE /EHsc /MTd /W2 /c)
     # Set the DLLEXPORT variable to export symbols
-    target_compile_definitions(mylib PRIVATE WIN_EXPORT)
-endif(UNIX)
+    target_compile_definitions(roukavici PRIVATE WIN_EXPORT)
+endif()
 {% endhighlight %}
 
 If you're unfamiliar with this modern CMake syntax, I highly recommend you read articles on it like [this one](https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/), because my post alone isn't enough to cover the vast topic that is CMake best practices. Now let's build it, this is what it should look like on Linux:
