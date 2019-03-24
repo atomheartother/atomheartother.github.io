@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "Securinet 2019 Prequalz - Trading Value"
+title: "Securinet 2019 Prequalz - Maze"
 categories:
   - Cybersecurity
-last_modified_at: 2019-03-24 18:08:00 +0000
+last_modified_at: 2019-03-24 19:20:00 +0000
 comments: true
 ---
 
