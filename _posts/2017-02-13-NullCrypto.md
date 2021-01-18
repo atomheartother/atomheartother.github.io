@@ -128,7 +128,7 @@ Alright, so we have to go to page `141525` of the magazine (I actually tried it 
 We go to page 41 and manually try the md5 hash of all of these brands... ans clearTax turns out to be it!
 
 {% highlight bash %}
-TomArch% echo -ne "clearTax" | md5sum 
+LizArch% echo -ne "clearTax" | md5sum 
 8c437d9ef6c7786e9df3ac2bf223445e  -
 {% endhighlight %}
 
