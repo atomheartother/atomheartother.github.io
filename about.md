@@ -4,9 +4,9 @@ title: Contact / About
 sidebar_link: true
 ---
 ## Contact
-How nice of you to come by!  If you wanna contact me you can always [throw a Tweet my way](https://twitter.com/srslizness). My personal email is `atomheartother@gmail.com`, and my [GitHub account is here](https://github.com/atomheartother).
+How nice of you to come by!  If you wanna contact me, my personal email is `atomheartother@gmail.com`, and my [GitHub account is here](https://github.com/atomheartother).
 
-If you want to get personal, you can find me on Discord at `Lizzzard#4242`. I'm always up for a chat, don't be a stranger.
+If you want to get personal, you can find me on Discord at `Élise#4242`. I'm always up for a chat, don't be a stranger. And yep, I don't really use social media, so this is it.
 
 That's about it! Please try and have a nice day[.](https://www.youtube.com/watch?v=Stg6fWCy6mA)
 
